@@ -1,19 +1,10 @@
-import { observable, autorun } from "./core/mobx";
+import { observable, autorun } from './core/mobx';
+// import { observable, autorun } from 'mobx';
 
-// 1. 定义状态
-const store = observable({
-  count: 0,
-  obj: {
-    a: 1,
-    b: 2
-  }
-});
+const store = observable({ a: 1, b: 3 });
 
-// 2. 响应状态
 autorun(() => {
-  console.log("count:", store.obj.a,);
+  console.log(store.a)
 });
-// count: 0
 
-// 3. 修改状态
-store.obj.a = 10
+store.a = 2;
