@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "lib": [
+      "ES2015",
+      "DOM"
+    ],
+    "noImplicitReturns": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    // "module": "esnext",
+    "moduleResolution": "node",
+    "target": "es5",
+    "allowJs": true,
+    "jsx": "react",
+  }
+}

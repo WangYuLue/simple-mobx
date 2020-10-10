@@ -1,0 +1,13 @@
+{
+  "name": "simple-mobx",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "mobx": "^6.0.1"
+  },
+  "devDependencies": {
+    "parcel": "^1.12.4",
+    "typescript": "^4.0.3"
+  }
+}
