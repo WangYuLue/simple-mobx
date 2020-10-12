@@ -12,15 +12,14 @@ const store = observable(
 );
 
 autorun(() => {
-  console.log('===>1');
+  console.log(store.a);
 
-  console.log(store.c.d)
+  // if (store.a === 1) {
+  //   console.log(store.b)
+  // } else {
+  //   console.log(store.c.d)
+  // }
 });
-autorun(() => {
-  console.log('===>2');
-  console.log(store.b)
-});
 
-
-store.b = 10;
-store.c.d = 2;
+store.a = 2;
+store.c.d = 10

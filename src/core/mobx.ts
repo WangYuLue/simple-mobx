@@ -1,16 +1,19 @@
 import EventEmitter from './event-emitter'
 const eventEmitter = new EventEmitter();
 
-let pending = null;
-let obIdNum = 1;
+let pending: any = null;
+let obId = 1;
 
 const autorun = (fn) => {
-  pending = fn;
-  fn();
-  pending = null;
+  const warpFn = () => {
+    pending = warpFn;
+    fn();
+    pending = null;
+  }
+  warpFn();
 };
 
-const observable1 = (obj) => {
+const observable = (obj) => {
   // 这个 _data 不可枚举，仅用于进行值的存储
   Object.defineProperty(obj, '_data', {
     enumerable: false,
@@ -21,7 +24,7 @@ const observable1 = (obj) => {
     if (typeof obj[key] === 'object') {
       observable(obj[key]);
     } else {
-      const id = String(obIdNum++);
+      const id = String(obId++);
       Object.defineProperty(obj, key, {
         get: function () {
           if (pending) {
@@ -46,7 +49,7 @@ const observable1 = (obj) => {
 
 const map = new WeakMap();
 
-const observable = (obj) => {
+const observable1 = (obj) => {
   return new Proxy(obj, {
     get: (target, propKey) => {
       if (typeof target[propKey] === 'object') {
@@ -57,7 +60,7 @@ const observable = (obj) => {
             map.set(target, {});
           }
           const mapObj = map.get(target);
-          const id = String(obIdNum++);
+          const id = String(obId++);
           mapObj[propKey] = id;
           eventEmitter.on(id, pending);
         }
