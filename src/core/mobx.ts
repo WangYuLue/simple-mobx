@@ -10,7 +10,7 @@ const autorun = (fn) => {
   pending = null;
 };
 
-const observable = (obj) => {
+const observable1 = (obj) => {
   // 这个 _data 不可枚举，仅用于进行值的存储
   Object.defineProperty(obj, '_data', {
     enumerable: false,
@@ -41,6 +41,40 @@ const observable = (obj) => {
   });
 
   return obj;
+}
+
+
+const map = new WeakMap();
+
+const observable = (obj) => {
+  return new Proxy(obj, {
+    get: (target, propKey) => {
+      if (typeof target[propKey] === 'object') {
+        return observable(target[propKey])
+      } else {
+        if (pending) {
+          if (!map.get(target)) {
+            map.set(target, {});
+          }
+          const mapObj = map.get(target);
+          const id = String(obIdNum++);
+          mapObj[propKey] = id;
+          eventEmitter.on(id, pending);
+        }
+        return target[propKey]
+      }
+    },
+    set: (target, propKey, value) => {
+      if (target[propKey] !== value) {
+        target[propKey] = value;
+        const mapObj = map.get(target);
+        if (mapObj && mapObj[propKey]) {
+          eventEmitter.emit(mapObj[propKey]);
+        }
+      }
+      return true;
+    }
+  })
 }
 
 export {
