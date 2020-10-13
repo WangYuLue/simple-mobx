@@ -2,7 +2,7 @@
 
 ## 导读
 
-Mobx 是 React 常用的状态管理库。他有很多有点
+Mobx 是 React 常用的状态管理库。
 
 但是初次读 Mobx 的官方文档，概念很多，例如：`Actions`、`Derivations`、`State`，还有各种各样相关的装饰器，让人摸不着头脑。
 
