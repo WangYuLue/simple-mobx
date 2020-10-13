@@ -23,12 +23,12 @@ const observable = (obj) => {
         if (currentFn) {
           em.on(id, currentFn);
         }
-        return this[data][key];
+        return obj[data][key];
       },
       set: function (v) {
         // 值不变时不触发
-        if (this[data][key] !== v) {
-          this[data][key] = v;
+        if (obj[data][key] !== v) {
+          obj[data][key] = v;
           em.emit(id);
         }
       }

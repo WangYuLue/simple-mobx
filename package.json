@@ -3,11 +3,18 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "demo01": "ts-node demo01/index.ts",
+    "demo02": "ts-node demo02/index.ts",
+    "demo03": "ts-node demo03/index.ts",
+    "demo04": "ts-node demo04/index.ts"
+  },
   "dependencies": {
     "mobx": "^6.0.1"
   },
   "devDependencies": {
     "parcel": "^1.12.4",
+    "ts-node": "^9.0.0",
     "typescript": "^4.0.3"
   }
 }

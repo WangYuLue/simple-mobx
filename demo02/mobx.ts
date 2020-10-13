@@ -5,12 +5,9 @@ let currentFn;
 let obId = 1;
 
 const autorun = (fn) => {
-  const warpFn = () => {
-    currentFn = warpFn;
-    fn();
-    currentFn = null;
-  }
-  warpFn();
+  currentFn = fn;
+  fn();
+  currentFn = null;
 };
 
 const observable = (obj) => {
