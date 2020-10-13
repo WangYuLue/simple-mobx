@@ -630,7 +630,7 @@ const observable = (obj) => {
 
 希望通过这篇教程，读者能够对 `Mobx` 的底层有更深刻的认识。
 
-这些例子的完整代码可以[点这里](https://github.com/WangYuLue/simlple-mobx)查看，如果感觉这些 demo 写的不错，可以给笔者一个 star，谢谢大家阅读。
+这些例子的完整代码可以[点这里](https://github.com/WangYuLue/simple-mobx)查看，如果感觉这些 demo 写的不错，可以给笔者一个 star，谢谢大家阅读。
 
 ## 相关阅读
 
