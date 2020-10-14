@@ -172,10 +172,12 @@ export default class EventEmitter {
       this.list[event] = [];
       target = this.list[event];
     }
-    target.push(fn);
+    if (!target.includes(fn)) {
+      target.push(fn);
+    }
   };
   emit(event, ...args) {
-    let fns = this.list[event];
+    const fns = this.list[event];
     if (fns && fns.length > 0) {
       fns.forEach(fn => {
         fn && fn(...args);
@@ -287,6 +289,7 @@ autorun(() => {
 });
 
 store.a = 5;
+store.a = 6;
 ```
 
 结果为：
@@ -294,6 +297,7 @@ store.a = 5;
 ```bash
 1
 5
+6
 ```
 
 我们发现运行结果和使用原生的 `observable`、`autorun` 运行结果一致。
@@ -316,6 +320,7 @@ autorun(() => {
 });
 
 store.b.c = 5;
+store.b.c = 6;
 ```
 
 赋值时并没有触发 `autorun` 中的方法。
@@ -386,6 +391,7 @@ autorun(() => {
 
 store.a = 2
 store.b.c = 5;
+store.b.c = 6;
 ```
 
 我们在 `demo02` 中的实现的 `mobx` 打印结果是：
@@ -399,6 +405,7 @@ store.b.c = 5;
 ```bash
 1
 5
+6
 ```
 
 这是为什么？
@@ -616,9 +623,146 @@ const observable = (obj) => {
 };
 ```
 
-运行的效果和 `defineProperty` 版的完全一致
+运行的效果和 `defineProperty` 版的完全一致。
 
 > 感兴趣的同学可以运行 `yarn demo04` 查看运行效果
+
+### 7、优化 `EventEmitter`
+
+`Proxy` 版的 `MobX` 还是会有一些小问题: **em.list 的长度会随着 autorun 的调用越来越大**。
+
+这是因为我们只有订阅操作，但是没有取消订阅的操作。
+
+核心原因是 之前的代码中我们用自增ID来确定唯一的信道，这是有问题的。
+
+怎么解决呢？我们可以参考 `Proxy` 的思路，把对象当作 key，来改造 `EventEmitter`。
+
+改造后的代码如下，参考 `./utils/event-emitter-with-weakmap.ts`：
+
+```ts
+export default class EventEmitter {
+  list = new WeakMap();
+  on(obj, event, fn) {
+    let targetObj = this.list.get(obj);
+    if (!targetObj) {
+      targetObj = {};
+      this.list.set(obj, targetObj);
+    }
+    let target = targetObj[event];
+    if (!target) {
+      targetObj[event] = [];
+      target = targetObj[event];
+    }
+    if (!target.includes(fn)) {
+      target.push(fn);
+    }
+  };
+  emit(obj, event, ...args) {
+    const targetObj = this.list.get(obj);
+    if (targetObj) {
+      const fns = targetObj[event];
+      if (fns && fns.length > 0) {
+        fns.forEach(fn => {
+          fn && fn(...args);
+        });
+      }
+    }
+  }
+};
+```
+
+基于 `demo04`， 我们再重构一下 `Mobx` 代码，参考 `./demo05/mobx.ts`：
+
+```ts
+import EventEmitter from '../utils/event-emitter-with-weakmap';
+
+const em = new EventEmitter();
+let currentFn;
+
+const autorun = (fn) => {
+  const warpFn = () => {
+    currentFn = warpFn;
+    fn();
+    currentFn = null;
+  }
+  warpFn();
+};
+
+const observable = (obj) => {
+  return new Proxy(obj, {
+    get: (target, propKey) => {
+      if (typeof target[propKey] === 'object') {
+        return observable(target[propKey]);
+      } else {
+        if (currentFn) {
+          em.on(target, propKey, currentFn);
+        }
+        return target[propKey];
+      }
+    },
+    set: (target, propKey, value) => {
+      if (target[propKey] !== value) {
+        target[propKey] = value;
+        em.emit(target, propKey);
+      }
+      return true;
+    }
+  });
+};
+```
+
+上面代码中，我们完全移除了使用自增ID来确定唯一信道。并且将 `WeakMap` 封装在 `EventEmitter` 中，`MobX`的代码也变得非常清爽。
+
+> 感兴趣的同学可以运行 `yarn demo05` 查看运行效果
+
+顺带的，我们也可以优化一下 `defineProperty` 版的 `Mobx`，移除其中的自增ID，参考 `./demo06/mobx.ts`：
+
+```ts
+import EventEmitter from '../utils/event-emitter-with-weakmap';
+
+const em = new EventEmitter();
+let currentFn;
+
+const autorun = (fn) => {
+  const warpFn = () => {
+    currentFn = warpFn;
+    fn();
+    currentFn = null;
+  }
+  warpFn();
+};
+
+const observable = (obj) => {
+  // 用 Symbol 当 key；这样就不会被枚举到，仅用于值的存储
+  const data = Symbol('data');
+  obj[data] = JSON.parse(JSON.stringify(obj));
+
+  Object.keys(obj).forEach(key => {
+    if (typeof obj[key] === 'object') {
+      observable(obj[key]);
+    } else {
+      Object.defineProperty(obj, key, {
+        get: function () {
+          if (currentFn) {
+            em.on(obj, key, currentFn);
+          }
+          return obj[data][key];
+        },
+        set: function (v) {
+          // 值不变时不触发
+          if (obj[data][key] !== v) {
+            obj[data][key] = v;
+            em.emit(obj, key);
+          }
+        }
+      });
+    }
+  });
+  return obj;
+};
+```
+
+> 感兴趣的同学可以运行 `yarn demo06` 查看运行效果
 
 ## 总结
 

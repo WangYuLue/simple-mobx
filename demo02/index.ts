@@ -7,3 +7,4 @@ autorun(() => {
 });
 
 store.b.c = 5;
+store.b.c = 6;

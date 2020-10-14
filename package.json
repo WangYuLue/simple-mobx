@@ -7,7 +7,9 @@
     "demo01": "ts-node demo01/index.ts",
     "demo02": "ts-node demo02/index.ts",
     "demo03": "ts-node demo03/index.ts",
-    "demo04": "ts-node demo04/index.ts"
+    "demo04": "ts-node demo04/index.ts",
+    "demo05": "ts-node demo05/index.ts",
+    "demo06": "ts-node demo06/index.ts"
   },
   "dependencies": {
     "mobx": "^6.0.1"

@@ -7,3 +7,4 @@ autorun(() => {
 });
 
 store.a = 5;
+store.a = 6;

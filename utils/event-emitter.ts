@@ -6,10 +6,12 @@ export default class EventEmitter {
       this.list[event] = [];
       target = this.list[event];
     }
-    target.push(fn);
+    if (!target.includes(fn)) {
+      target.push(fn);
+    }
   };
   emit(event, ...args) {
-    let fns = this.list[event];
+    const fns = this.list[event];
     if (fns && fns.length > 0) {
       fns.forEach(fn => {
         fn && fn(...args);

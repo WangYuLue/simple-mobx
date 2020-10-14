@@ -8,5 +8,6 @@ autorun(() => {
   }
 });
 
-store.a = 2
+store.a = 2;
 store.b.c = 5;
+store.b.c = 6;
