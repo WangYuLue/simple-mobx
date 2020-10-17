@@ -128,7 +128,7 @@ store.b.c = 10;
 
 ### 1、Mobx 与 订阅发布模式 对比
 
-仔细观察我们刚才写的例子：
+仔细观察刚才的例子：
 
 ```js
 import { observable, autorun } from 'mobx';
