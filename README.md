@@ -778,16 +778,5 @@ const observable = (obj) => {
 
 ## 相关阅读
 
-[Mobx 文档](https://mobx.js.org/README.html)
-
-[MobX 原理](https://github.com/sorrycc/blog/issues/3)
-
-[MobX 源码探究](https://malcolmyu.github.io/2018/09/09/Core-Concepts-of-Mobx/)
-
-[MobX 简明教程](https://github.com/whinc/blog/issues/16)
-
-[使用 Mobx + Hooks 管理 React 应用状态](https://github.com/olivewind/blog/issues/5)
-
-[Mobx React -- 最佳实践](http://dengxinbo.cn/2019/11/17/%E3%80%90%E7%BF%BB%E8%AF%91%E3%80%91mobx-react-%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/)
-
-[Hooks & Mobx 只需额外知道两个 Hook，便能体验到如此简单的开发方式](https://zhuanlan.zhihu.com/p/138226768)
+- [Mobx 文档](https://mobx.js.org/README.html)
+- [MobX 源码探究](https://malcolmyu.github.io/2018/09/09/Core-Concepts-of-Mobx/)
